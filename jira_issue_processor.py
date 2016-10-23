@@ -16,11 +16,13 @@ import re
 from os import environ
 from sys import exit
 
-project_name = "Example Project"
-jira_url = "https://artechra.atlassian.net"
-replacements = {
-	"www.bbc.co.uk" : "www.itv.co.uk",
-	"www.sky.com/project1" : "www.c4.co.uk/c4project"
+config = {
+	"project_name" : "Example Project",
+	"jira_url"     : "https://artechra.atlassian.net",
+	"replacements" : {
+					"www.bbc.co.uk" : "www.itv.co.uk",
+					"www.sky.com/project1" : "www.c4.co.uk/c4project"
+    }
 }
 
 def get_user_and_password_from_env():
@@ -41,10 +43,10 @@ def calculate_issue_updates(issue, replacements):
 			ret = (issue, newDescription)
 	return ret
 
-def find_and_update_issues(issue_list, replacements):
+def find_and_update_issues(issue_list, string_replacements):
 	updates = {}
 	for i in issue_list:
-		result = calculate_issue_updates(i, replacements)
+		result = calculate_issue_updates(i, string_replacements)
 		if (result):
 			updates[result[0].key] = result[1]
 	print("Updates list: " + str(updates))
@@ -53,17 +55,23 @@ def find_and_update_issues(issue_list, replacements):
 		issue.update(description=updates.get(issue_key))
 	return len(updates.keys())
 
-(user, password) = get_user_and_password_from_env()
-if (not user or not password):
-	print("Set $JIRA_USER and $JIRA_PASSWORD to define Jira credentials")
-	exit()
+def process_issues(jira_instance, jql_query, string_replacements):
+	issues = jira.search_issues(jql_query)
+	print("Found {} issues".format(len(issues)))
 
-jira = JIRA(basic_auth=(user, password), server=jira_url)
+	updated = find_and_update_issues(issues, string_replacements)
+	print("Updates complete updated {} issues".format(updated))
+	return updated
 
-all_project_issues = jira.search_issues('project = "{}" order by key'.format(project_name))
-print("Found {} issues".format(len(all_project_issues)))
 
-updated = find_and_update_issues(all_project_issues, replacements)
-print("Updates complete updated {} issues in project '{}'".format(updated, project_name))
+if __name__=='__main__':
+	(user, password) = get_user_and_password_from_env()
+	if (not user or not password):
+		print("Set $JIRA_USER and $JIRA_PASSWORD to define Jira credentials")
+		exit()
 
+	jira = JIRA(basic_auth=(user, password), server=config["jira_url"])
+	jql = 'project = "{}" order by key'.format(config["project_name"])
+	print("Updating issues in {} that match '{}'".format(config["jira_url"], jql))
+	process_issues(jira, jql, config["replacements"])
 
