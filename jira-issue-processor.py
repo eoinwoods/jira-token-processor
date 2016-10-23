@@ -1,3 +1,16 @@
+#!python
+
+##
+## jira-issue-processor
+##
+## This is a self contained Python script that can be used to replace strings in a set of
+## Jira issues.  It connects to a Jira instance via the REST API, retrieves all "issues" in
+## the project and updates their "description" fields to replace one set of strings with 
+## another.
+##
+## Details in README.md
+##
+##
 from jira import JIRA
 import re
 from os import environ
