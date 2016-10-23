@@ -25,7 +25,7 @@ to check it is working.
 To use the utility:
 
 - Set the JIRA_USER and JIRA_PASSWORD environment variables for a user
-  who can update the issues in the project of interest
+  who can create, update, *and delete* the issues in the project of interest
 - Update the script to set the project name and JIRA URL at the top of the
   script
 - Update the script to set the set of replacements in the "replacements"
