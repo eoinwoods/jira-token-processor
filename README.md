@@ -33,4 +33,6 @@ To use the utility:
 - Run the script as "python jira_issue_processor.py" to update the issues
   in the target JIRA system
 
+From a security perspective note that BASIC authentication is used, so a https URL is vital.  For a more secure approach, the "jira-python" package allows other authentication methods to be used instead.
 
+From a scalability perspective note that this script is quite niave and just requests all of the issue records in a project in a single query.  Again, "jira-python" allows a much more sophisticated approach to allow batches to be retrieved for large projects and so this would be a relatively straightforward enhancement if needed.
