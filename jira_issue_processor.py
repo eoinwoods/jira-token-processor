@@ -17,7 +17,7 @@ from os import environ
 from sys import exit
 
 config = {
-	"project_name" : "Example Project",
+	"project_key" : "EXPRJ",
 	"jira_url"     : "https://artechra.atlassian.net",
 	"replacements" : {
 					"www.bbc.co.uk" : "www.itv.co.uk",
@@ -43,7 +43,7 @@ def calculate_issue_updates(issue, replacements):
 			ret = (issue, newDescription)
 	return ret
 
-def find_and_update_issues(issue_list, string_replacements):
+def find_and_update_issues(jira_instance, issue_list, string_replacements):
 	updates = {}
 	for i in issue_list:
 		result = calculate_issue_updates(i, string_replacements)
@@ -51,15 +51,15 @@ def find_and_update_issues(issue_list, string_replacements):
 			updates[result[0].key] = result[1]
 	print("Updates list: " + str(updates))
 	for issue_key in updates.keys():
-		issue = jira.issue(issue_key)
+		issue = jira_instance.issue(issue_key)
 		issue.update(description=updates.get(issue_key))
 	return len(updates.keys())
 
 def process_issues(jira_instance, jql_query, string_replacements):
-	issues = jira.search_issues(jql_query)
+	issues = jira_instance.search_issues(jql_query)
 	print("Found {} issues".format(len(issues)))
 
-	updated = find_and_update_issues(issues, string_replacements)
+	updated = find_and_update_issues(jira_instance, issues, string_replacements)
 	print("Updates complete updated {} issues".format(updated))
 	return updated
 
@@ -71,7 +71,7 @@ if __name__=='__main__':
 		exit()
 
 	jira = JIRA(basic_auth=(user, password), server=config["jira_url"])
-	jql = 'project = "{}" order by key'.format(config["project_name"])
+	jql = 'project = "{}" order by key'.format(config["project_key"])
 	print("Updating issues in {} that match '{}'".format(config["jira_url"], jql))
 	process_issues(jira, jql, config["replacements"])
 
