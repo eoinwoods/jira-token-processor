@@ -18,7 +18,9 @@ the following command line:
    $> pyvenv . && source bin/activate && pip install -r requirements.txt
 
 The snag with using jira-python is that it makes unit testing very difficult
-without complex stubbing, so (shamefully) this utility has no tests.
+without complex stubbing, so this code just has an integration test that creates
+some test ssue records in a Jira project and runs the utility against them
+to check it is working.
 
 To use the utility:
 
@@ -28,7 +30,7 @@ To use the utility:
   script
 - Update the script to set the set of replacements in the "replacements"
   dictionary variable at the top of the script
-- Run the script as "python jira-issue-processor.py" to update the issues
+- Run the script as "python jira_issue_processor.py" to update the issues
   in the target JIRA system
 
 
