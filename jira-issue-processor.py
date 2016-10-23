@@ -15,25 +15,53 @@ def get_user_and_password_from_env():
 	password = environ.get('JIRA_PASSWORD')
 	return (user, password)
 
-def update_issue_with_replacements(issue, replacements):
-	ret = 0
+# def update_issue_with_replacements(issue, replacements):
+# 	ret = 0
+# 	for from_str, to_str in replacements.items():
+# 		description = issue.fields.description
+# 		if (description.count(from_str) > 0) :
+# 			exp = re.compile(from_str)
+# 			print("Updating issue " + issue.key + " description, replacing [" + from_str + "] with [" + to_str + "]")
+# 			newDescription = exp.sub(to_str, description)
+# 			print("Old description: [" + description + "] newDescription: [" + newDescription + "]")
+# 			# Note - this update() actually calls Jira!
+# 			issue.update(description=newDescription)
+# 			ret = 1
+# 	return ret
+
+def calculate_issue_updates(issue, replacements):
+	ret = None
+	description = issue.fields.description
 	for from_str, to_str in replacements.items():
-		description = issue.fields.description
 		if (description.count(from_str) > 0) :
 			exp = re.compile(from_str)
 			print("Updating issue " + issue.key + " description, replacing [" + from_str + "] with [" + to_str + "]")
 			newDescription = exp.sub(to_str, description)
 			print("Old description: [" + description + "] newDescription: [" + newDescription + "]")
-			# Note - this update() actually calls Jira!
-			issue.update(description=newDescription)
-			ret = 1
+			description = newDescription
+			ret = (issue, newDescription)
 	return ret
 
+
 def find_and_update_issues(issue_list, replacements):
-	updated_count = 0
+	updates = {}
 	for i in issue_list:
-		updated_count = updated_count + update_issue_with_replacements(i, replacements)
-	return updated_count
+		result = calculate_issue_updates(i, replacements)
+		if (result):
+			print("UPDATES:" + str(updates))
+			updates[result[0].key] = result[1]
+	print("Updates list: " + str(updates))
+	for issue_key in updates.keys():
+		issue = jira.issue(issue_key)
+		issue.update(description=updates.get(issue_key))
+	return len(updates.keys())
+
+
+# def find_and_update_issues(issue_list, replacements):
+# 	updated_count = 0
+# 	for i in issue_list:
+# 		updated_count = updated_count + update_issue_with_replacements(i, replacements)
+# 	return updated_count
 
 (user, password) = get_user_and_password_from_env()
 if (not user or not password):
