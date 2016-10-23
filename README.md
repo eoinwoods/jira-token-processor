@@ -15,8 +15,7 @@ file which was generated using "pip freeze".
 You can create a Python environment to run this with these dependencies using 
 the following command line:
 
-   $> virtualenv --no-site-packages --distribute .env && \
-         source .env/bin/activate && pip install -r requirements.txt
+   $> pyvenv . && source bin/activate && pip install -r requirements.txt
 
 The snag with using jira-python is that it makes unit testing very difficult
 without complex stubbing, so (shamefully) this utility has no tests.
