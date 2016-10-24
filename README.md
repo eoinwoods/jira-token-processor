@@ -5,7 +5,7 @@ This is a simple Python script which allows you to point it at a Jira
 repository and project and have it update a set of strings (in fact 
 regex'es) to another set of strings (again can be regex'es).
 
-The heavy lifting uses the terrific "jira-python" package to make accessing 
+The heavy lifting uses the terrific ["jira-python"](https://github.com/pycontribs/jira) package to make accessing 
 Jira over REST almost trivial.  The package documentation can be found here: 
 http://jira.readthedocs.io/
 
