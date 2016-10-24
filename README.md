@@ -1,7 +1,7 @@
 Jira Token Replacer
 ===================
 
-This is a simple Python script which allows you to point it at a Jira
+This is a simple Python 3 script which allows you to point it at a Jira
 repository and project and have it update a set of strings (in fact 
 regex'es) to another set of strings (again can be regex'es).
 
